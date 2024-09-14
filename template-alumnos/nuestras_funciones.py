@@ -38,8 +38,8 @@ def elim_gaussianaConPermutaciones(A):
 
             newPivoteIndice= (0,i)
             for k in range(len(listaDePivotes)-1):
-                if listaDePivotes[k][0]<= listaDePivotes[k+1][0]:
-                    newPivoteIndice = listaDePivotes[k+1]
+                if newPivoteIndice[0]<= listaDePivotes[k][0]:
+                    newPivoteIndice = listaDePivotes[k]
 
             #ahora resta crear una identidad con las filas intercambiadas por los indices newPivote[]
 
@@ -91,6 +91,19 @@ def multiplicarPermutaciones(matricesPermutaciones:list):
 matrizEjemplo = np.array([[1,2,3,4],[1,2,5,6],[1,3,5,2],[1,3,5,4]])
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 def ejMatriz(matriz):
         
 
@@ -106,7 +119,12 @@ def ejMatriz(matriz):
     print('PB=LU? ' , 'Si!' if np.allclose(np.linalg.norm(P@matriz - L@U, 1), 0) else 'No!')
     print('Norma infinito de U: ', np.max(np.sum(np.abs(U), axis=1)) )
 
+    print("PA=\n",P@matriz)
+
+    print("LU=\n",L@U)
+
     
 
 ejMatriz(matrizEjemplo)
+
 
