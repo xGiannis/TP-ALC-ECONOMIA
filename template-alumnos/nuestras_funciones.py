@@ -55,6 +55,10 @@ def elim_gaussianaConPermutaciones(A):
 
 
             Ac= permutacion @ Ac
+            
+            for k in range (i):                             #con este for le aplico las permutaciones a todos los M_k tal que k=<i, es como calcular M moño
+                L[0:,k] = (permutacion @ L[0:,k])           # las inversas de los M moño forman L
+                print(f'L despues de permutar \n {L}')
 
             for j in range(i+1, n):
                 factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
@@ -63,10 +67,6 @@ def elim_gaussianaConPermutaciones(A):
                 #cant_operaciones #... n por algo
                 print(f"Matriz L despuse del paso ({j},{i})")
                 print(L) 
-            
-            for k in range (i):
-                L[0:,k] = (permutacion @ L[0:,k])
-                print(f'L despues de permutar \n {L}')
 
 
         else:
