@@ -31,12 +31,12 @@ def elim_gaussianaConPermutaciones(A):
             print(f"Pivote {i} es nulo")
             
             listaDePivotes:list[tuple] = []
-            for j in range(i,n):
+            for j in range(i+1,n):
                 listaDePivotes.append((Ac[j,i],j))   #listaDePivotes.append((elemento,indice)), tupla = (elemento,indice)
 
             print(listaDePivotes)
 
-            newPivoteIndice= (0,i)
+            newPivoteIndice= listaDePivotes[0]
             for k in range(len(listaDePivotes)-1):
                 if newPivoteIndice[0]<= listaDePivotes[k][0]:
                     newPivoteIndice = listaDePivotes[k]
@@ -56,17 +56,27 @@ def elim_gaussianaConPermutaciones(A):
 
             Ac= permutacion @ Ac
 
+            for j in range(i+1, n):
+                factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
+                L[j,i] = factor # guardamos el factor en la matriz L 
+                Ac[j,i:] = Ac[j,i:]  - factor*Ac[i,i:]
+                #cant_operaciones #... n por algo
+                print(f"Matriz L despuse del paso ({j},{i})")
+                print(L) 
+            
+            for k in range (i):
+                L[0:,k] = (permutacion @ L[0:,k])
+                print(f'L despues de permutar \n {L}')
 
 
-
-        
-        for j in range(i+1, n):
-            factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
-            L[j,i] = factor # guardamos el factor en la matriz L 
-            Ac[j,i:] = Ac[j,i:]  - factor*Ac[i,i:]
-            #cant_operaciones #... n por algo
-            print(f"Matriz L despuse del paso ({j},{i})")
-            print(L) 
+        else:
+            for j in range(i+1, n):
+                factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
+                L[j,i] = factor # guardamos el factor en la matriz L 
+                Ac[j,i:] = Ac[j,i:]  - factor*Ac[i,i:]
+                #cant_operaciones #... n por algo
+                print(f"Matriz L despuse del paso ({j},{i})")
+                print(L) 
 
     P=multiplicarPermutaciones(matricesPermutacion)
     ## hasta aqui
@@ -89,13 +99,9 @@ def multiplicarPermutaciones(matricesPermutaciones:list):
 
 
 matrizEjemplo = np.array([[1,2,3,4],[1,2,5,6],[1,3,5,2],[1,3,5,4]])
-
-
-
-
-
-
-
+matrizEjemplo2 = np.array([[1,2,3],[1,2,5],[3,4,1]])
+matrizEjemplo3 = np.array([[0,2,1,3,4],[1,-1,2,0,1],[0,0,0,1,-1],[2,0,3,4,2],[3,1,4,2,0]])
+matrizEjemplo4 = np.array([[0,2,1,3,4,5],[1,-1,2,0,1,2],[0,0,0,1,-1,3],[2,0,3,4,2,1],[0,0,1,2,0,1],[3,1,4,2,0,0]])
 
 
 
@@ -125,6 +131,6 @@ def ejMatriz(matriz):
 
     
 
-ejMatriz(matrizEjemplo)
+ejMatriz(matrizEjemplo2)
 
 
