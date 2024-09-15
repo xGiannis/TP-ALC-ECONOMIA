@@ -60,34 +60,30 @@ def elim_gaussianaConPermutaciones(A):
                 L[0:,k] = (permutacion @ L[0:,k])           # las inversas de los M moño forman L
                 print(f'L despues de permutar \n {L}')
 
-            for j in range(i+1, n):
-                factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
-                L[j,i] = factor # guardamos el factor en la matriz L 
-                Ac[j,i:] = Ac[j,i:]  - factor*Ac[i,i:]
-                #cant_operaciones #... n por algo
-                print(f"Matriz L despuse del paso ({j},{i})")
-                print(L) 
+        
+        for j in range(i+1, n):
+            factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
+            L[j,i] = factor # guardamos el factor en la matriz L 
+            Ac[j,i:] = Ac[j,i:]  - factor*Ac[i,i:]
+            #cant_operaciones #... n por algo
+            print(f"Matriz L despuse del paso ({j},{i})")
+            print(L) 
 
 
-        else:
-            for j in range(i+1, n):
-                factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
-                L[j,i] = factor # guardamos el factor en la matriz L 
-                Ac[j,i:] = Ac[j,i:]  - factor*Ac[i,i:]
-                #cant_operaciones #... n por algo
-                print(f"Matriz L despuse del paso ({j},{i})")
-                print(L) 
-
-    P=multiplicarPermutaciones(matricesPermutacion)
+    if(len(matricesPermutacion)>=1):                            ##me fijo que haya permutaciones como para calcular P, sino devuelvo identidad
+        P=multiplicarPermutaciones(matricesPermutacion)
+    else:
+        P = np.eye(n)
     ## hasta aqui
             
     #L = np.tril(Ac,-1) + np.eye(A.shape[0]) 
     print("esto queda despues de todos los pasos --->\n",Ac)
     U = np.triu(Ac)
     
-
-
+    
     return L, U, cant_op, P
+
+
 
 def multiplicarPermutaciones(matricesPermutaciones:list):
     P=matricesPermutaciones[len(matricesPermutaciones)-1]
@@ -134,3 +130,99 @@ def ejMatriz(matriz):
 ejMatriz(matrizEjemplo2)
 
 
+########FUNCION INVERSA##########
+#Lo hice para ver si nos daba bien , usando las funciones del labo. back_substitution no tiene nada raro y escalonar filas es dudosa pero la podemos hacer usando
+#el codigo de arriba, donde estamos haciendo eliminacion gaussiana
+
+def back_substitution(A_aug):
+    """
+    Realiza la sustitución hacia atrás para obtener la identidad en el lado izquierdo
+    de la matriz aumentada y la inversa en el lado derecho.
+    """
+    n = A_aug.shape[0]
+    
+    # Desde la última fila hacia la primera
+    for i in range(n-1, -1, -1):
+        # Normalizar la fila de pivote
+        A_aug[i] = A_aug[i] / A_aug[i, i]
+        
+        # Hacer ceros en las filas superiores
+        for j in range(i):
+            A_aug[j] -= A_aug[i] * A_aug[j, i]
+    
+    return A_aug[:, n:]
+
+
+def escalonar_filas(M):
+    """ 
+        Retorna la Matriz Escalonada por Filas 
+    """
+    A = np.copy(M)
+    if (issubclass(A.dtype.type, np.integer)):
+        A = A.astype(float)
+
+    # Si A no tiene filas o columnas, ya esta escalonada
+    f, c = A.shape
+    if f == 0 or c == 0:
+        return A
+
+    # buscamos primer elemento no nulo de la primera columna
+    i = 0
+    
+    while i < f and A[i,0] == 0:
+        i += 1
+
+    if i == f:
+        # si todos los elementos de la primera columna son ceros
+        # escalonamos filas desde la segunda columna
+        B = escalonar_filas(A[:,1:])
+        
+        # y volvemos a agregar la primera columna de zeros
+        return np.block([A[:,:1], B])
+
+
+    # intercambiamos filas i <-> 0, pues el primer cero aparece en la fila i
+    if i > 0:
+        A[[0,i],:] = A[[i,0],:]
+        
+    
+    # intercambiamos filas i <-> 0, pues el primer cero aparece en la fila i
+    if i > 0:
+        A[[0,i],:] = A[[i,0],:]
+
+    # PASO DE TRIANGULACION GAUSSIANA:
+    # a las filas subsiguientes les restamos un multiplo de la primera
+    A[1:,:] -= (A[0,:] / A[0,0]) * A[1:,0:1]
+
+    # escalonamos desde la segunda fila y segunda columna en adelante
+    B = escalonar_filas(A[1:,1:])
+
+    # reconstruimos la matriz por bloques adosando a B la primera fila 
+    # y la primera columna (de ceros)
+    return np.block([ [A[:1,:]], [ A[1:,:1], B] ])
+
+
+def inversaLU(L,U, P = None):
+    #PA = LU -> A = P^-1 LU -> A^-1 = (LU)^-1 P -> A^-1 = U^-1 L^-1 P 
+    
+    Id = np.eye(np.shape(U)[0])
+    
+    #inversa U
+    U_aumentada = np.c_[U,Id]
+    U_inv = back_substitution(U_aumentada)
+    
+    #inversa L
+    L_aumentada = np.c_[L,Id]
+    L_inv = escalonar_filas(L_aumentada)
+    L_inv = back_substitution(L_inv)
+    
+    Inv = U_inv @ L_inv @ P
+    print(np.shape(Inv))
+    
+    return Inv
+
+
+
+####TEST INVERSALU
+L,U,cant_oper,P = elim_gaussianaConPermutaciones(matrizEjemplo)  #probe solo con una y da bien, a seguir testeando
+print(f'Inversa = \n {inversaLU(L,U,P)}') 
