@@ -14,18 +14,18 @@ def calcularLU(A):
 
     matricesPermutacion=[]
 
-    print("esto es n--->",n)
+    
 
     #Gaussian Elimination
     for i in range(n):
         if Ac[i,i]==0:
-            print(f"Pivote {i} es nulo")
+            
             
             listaDePivotes:list[tuple] = []
             for j in range(i+1,n):
                 listaDePivotes.append((Ac[j,i],j))   #listaDePivotes.append((elemento,indice)), tupla = (elemento,indice)
 
-            print(listaDePivotes)
+            
 
             newPivoteIndice= listaDePivotes[0]
             
@@ -33,7 +33,7 @@ def calcularLU(A):
                     
                 if newPivoteIndice[0]<= listaDePivotes[k][0]:
                     newPivoteIndice = listaDePivotes[k]
-                print(newPivoteIndice)
+                
             #ahora resta crear una identidad con las filas intercambiadas por los indices newPivote[]
 
 
@@ -51,7 +51,7 @@ def calcularLU(A):
             
             for k in range (i):
                 L[0:,k] = (permutacion @ L[0:,k])
-                print(f'L despues de permutar \n {L}')    
+                    
 
         for j in range(i+1, n):
             factor = Ac[j,i] / Ac[i,i]#aca va q multiplico entre las matrices para q de 0.
