@@ -1,6 +1,8 @@
 import numpy as np
 
 def calcularLU(A):
+    """Realiza la descomposicón PA = LU de una matriz A. Como parametro rescibe una matriz A y devuelve L (triangular inferior
+       con 1s en la diagonal), U (triangular superior) y P (matriz de permutación)."""
     m=A.shape[0]
     n=A.shape[1]
     Ac = A.copy()
@@ -69,7 +71,9 @@ def calcularLU(A):
     
     return L, U, P
 
+
 def multiplicarPermutaciones(matricesPermutaciones:list):
+    """Como parametro recibe una lista de matrices de permutacion y devuelve el producto de ellas"""
     P=matricesPermutaciones[len(matricesPermutaciones)-1]
     for i in range(len(matricesPermutaciones)-2,-1,-1):         #el menos 1 del segundo item es porque es -1 exclusive
         Pnmenos1 = matricesPermutaciones[i]
@@ -145,6 +149,8 @@ def escalonar_filas(M):
 
 
 def inversaLU(L,U, P = None):
+    """Calcula la inversa de una matriz, recibiendo como parámetros L, U y P provenientes de la descomposición PA = LU de la
+       matriz A. """
     #PA = LU -> A = P^-1 LU -> A^-1 = (LU)^-1 P -> A^-1 = U^-1 L^-1 P 
     
     Id = np.eye(np.shape(U)[0])
@@ -163,21 +169,12 @@ def inversaLU(L,U, P = None):
     
     return Inv
 
-def resolverSistema(A,d):
-    ML = np.eye(np.shape(A)[0]) - A
 
-    #calculamos L, U, P y la inversa de ML:
-    L, U, P = calcularLU(ML)
-    ML_inv = inversaLU(L,U,P)
-
-    #calculamos p:
-    p = ML_inv @ d
-    
-    return p
 
 #Otra opcion para escalonar filas, como es triangular inferior no se hacen 0s en la diagonal entonces no hay que permutar filas.
 
 def escalonar_filas2(M):
+    """Escalona las filas de una matriz M, sirve para los casos donde no se generan 0 en la diagonal."""
     n= np.shape(M)[0]
     
     for i in range(n):
