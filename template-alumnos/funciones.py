@@ -156,7 +156,7 @@ def inversaLU(L,U, P = None):
     #inversa L
     L_aumentada = np.c_[L,Id]
     L_inv = escalonar_filas(L_aumentada)
-    L_inv = back_substitution(L_inv)
+    L_inv = back_substitution(L_inv)  #creo que se puede sacar este paso porq L tiene 1s en la diagonal entonces no hace nada esto.
     
     Inv = U_inv @ L_inv @ P
     print(np.shape(Inv))
@@ -174,3 +174,15 @@ def resolverSistema(A,d):
     p = ML_inv @ d
     
     return p
+
+#Otra opcion para escalonar filas, como es triangular inferior no se hacen 0s en la diagonal entonces no hay que permutar filas.
+
+def escalonar_filas2(M):
+    n= np.shape(M)[0]
+    
+    for i in range(n):
+        for j in range(i+1, n):
+            factor = M[j,i] / M[i,i]#aca va q multiplico entre las matrices para q de 0.
+            M[j,:] = M[j,:]  - factor*M[i,:]
+    
+    return M
