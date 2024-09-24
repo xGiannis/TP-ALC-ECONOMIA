@@ -11,7 +11,6 @@ def calcularLU(A):
         print('Matriz no cuadrada')
         return
     
-    ## desde aqui -- CODIGO A COMPLETAR
     L = np.eye(n) #inciamos L de nxn
 
     matricesPermutacion=[]
@@ -99,53 +98,6 @@ def back_substitution(A_aug):
     
     return A_aug[:, n:]
 
-def escalonar_filas(M):
-    """ 
-        Retorna la Matriz Escalonada por Filas 
-    """
-    A = np.copy(M)
-    if (issubclass(A.dtype.type, np.integer)):
-        A = A.astype(float)
-
-    # Si A no tiene filas o columnas, ya esta escalonada
-    f, c = A.shape
-    if f == 0 or c == 0:
-        return A
-
-    # buscamos primer elemento no nulo de la primera columna
-    i = 0
-    
-    while i < f and A[i,0] == 0:
-        i += 1
-
-    if i == f:
-        # si todos los elementos de la primera columna son ceros
-        # escalonamos filas desde la segunda columna
-        B = escalonar_filas(A[:,1:])
-        
-        # y volvemos a agregar la primera columna de zeros
-        return np.block([A[:,:1], B])
-
-
-    # intercambiamos filas i <-> 0, pues el primer cero aparece en la fila i
-    if i > 0:
-        A[[0,i],:] = A[[i,0],:]
-        
-    
-    # intercambiamos filas i <-> 0, pues el primer cero aparece en la fila i
-    if i > 0:
-        A[[0,i],:] = A[[i,0],:]
-
-    # PASO DE TRIANGULACION GAUSSIANA:
-    # a las filas subsiguientes les restamos un multiplo de la primera
-    A[1:,:] -= (A[0,:] / A[0,0]) * A[1:,0:1]
-
-    # escalonamos desde la segunda fila y segunda columna en adelante
-    B = escalonar_filas(A[1:,1:])
-
-    # reconstruimos la matriz por bloques adosando a B la primera fila 
-    # y la primera columna (de ceros)
-    return np.block([ [A[:1,:]], [ A[1:,:1], B] ])
 
 
 def inversaLU(L,U, P = None):
@@ -162,18 +114,17 @@ def inversaLU(L,U, P = None):
     #inversa L
     L_aumentada = np.c_[L,Id]
     L_inv = escalonar_filas(L_aumentada)
-    L_inv = back_substitution(L_inv)  #creo que se puede sacar este paso porq L tiene 1s en la diagonal entonces no hace nada esto.
     
     Inv = U_inv @ L_inv @ P
-    print(np.shape(Inv))
+   
     
     return Inv
 
 
 
-#Otra opcion para escalonar filas, como es triangular inferior no se hacen 0s en la diagonal entonces no hay que permutar filas.
+#como es triangular inferior no se hacen 0s en la diagonal entonces no hay que permutar filas.
 
-def escalonar_filas2(M):
+def escalonar_filas(M):
     """Escalona las filas de una matriz M, sirve para los casos donde no se generan 0 en la diagonal."""
     n= np.shape(M)[0]
     
