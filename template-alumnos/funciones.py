@@ -114,6 +114,10 @@ def inversaLU(L,U, P = None):
     #inversa L
     L_aumentada = np.c_[L,Id]
     L_inv = escalonar_filas(L_aumentada)
+
+    augmento = int((L_inv.shape[1])/2) 
+
+    L_inv = L_inv[:, augmento:] #Tomo solo la parte aumentada de la matriz que estoy operando
     
     Inv = U_inv @ L_inv @ P
    
